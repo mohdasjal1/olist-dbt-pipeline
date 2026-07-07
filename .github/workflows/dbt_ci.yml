@@ -1,4 +1,4 @@
-﻿# .github/workflows/dbt_ci.yml
+# .github/workflows/dbt_ci.yml
 # Project: Olist E-Commerce dbt Pipeline
 # Purpose: CI/CD pipeline that validates all SQL and dbt models on every PR to main.
 #
@@ -50,8 +50,7 @@ jobs:
       SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DATABASE }}
       SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
       SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
-      DBT_PROFILES_DIR: ./dbt_project
-
+      DBT_PROFILES_DIR: ${{ github.workspace }}/dbt_project
     steps:
       # -------------------------------------------------------
       # Step 1: Checkout repository
@@ -98,29 +97,26 @@ jobs:
       - name: Generate profiles.yml from secrets
         run: |
           cat > dbt_project/profiles.yml << EOF
-          olist_snowflake:
-            target: ci
-            outputs:
-              ci:
-                type: snowflake
-                account: "${SNOWFLAKE_ACCOUNT}"
-                user: "${SNOWFLAKE_USER}"
-                password: "${SNOWFLAKE_PASSWORD}"
-                role: "${SNOWFLAKE_ROLE}"
-                database: "${SNOWFLAKE_DATABASE}"
-                warehouse: "${SNOWFLAKE_WAREHOUSE}"
-                schema: RAW
-                threads: 4
-                client_session_keep_alive: False
-                query_tag: dbt_ci_pipeline
-          EOF
+olist_snowflake:
+  target: ci
+  outputs:
+    ci:
+      type: snowflake
+      account: "${SNOWFLAKE_ACCOUNT}"
+      user: "${SNOWFLAKE_USER}"
+      password: "${SNOWFLAKE_PASSWORD}"
+      role: "ACCOUNTADMIN"
+      database: "OLIST_DB"
+      warehouse: "OLIST_WH"
+      schema: RAW
+      threads: 4
+      client_session_keep_alive: False
+      query_tag: dbt_ci_pipeline
+EOF
         env:
           SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
           SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
           SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
-          SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
-          SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DATABASE }}
-          SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
 
       # -------------------------------------------------------
       # Step 6: dbt deps — install packages (dbt_utils)

@@ -1,4 +1,4 @@
-﻿"""
+"""
 scripts/snowflake_setup.py
 One-time setup: creates OLIST_DB, OLIST_WH, and all 4 schemas in Snowflake.
 Credentials read from environment variables — never hardcoded.

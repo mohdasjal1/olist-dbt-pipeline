@@ -1,4 +1,4 @@
-﻿# Session Log — Olist dbt Pipeline
+# Session Log — Olist dbt Pipeline
 
 ## Session 1 — 2026-07-07
 
