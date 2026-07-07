@@ -1,4 +1,4 @@
-﻿[sqlfluff]
+[sqlfluff]
 templater = dbt
 dialect = snowflake
 sql_file_exts = .sql
