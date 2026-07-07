@@ -10,13 +10,27 @@ This project is how we build the modern data pipeline to make that happen.
 
 **The What:** We built an automated pipeline that takes messy, raw E-Commerce data (spread across 9 different CSV files), loads it into a cloud database, cleans it, joins it all together, and creates perfectly structured "business-ready" tables for analysts to query. We also added a robotic testing system to make sure the data is never wrong.
 
-**The Why:** If you don't build this pipeline, your analysts would have to manually open 9 different massive Excel spreadsheets, try to VLOOKUP them together, and hope they don't crash their computer. We used **Data Engineering (specifically dbt and Snowflake)** to automate this entire process in the cloud.
+**The Why:** If you don't build this pipeline, your analysts would have to manually open 9 different massive Excel spreadsheets, try to VLOOKUP them together, and hope they don't crash their computer. We used **Data Engineering** to automate this entire process in the cloud.
 
 ---
 
-## 2. The Architecture (The "Medallion" Pattern)
+## 2. The Tools (Snowflake & dbt)
 
-In data engineering, we organize our data into three layers, like medals in the Olympics: **Bronze, Silver, and Gold.** We use a tool called **dbt (Data Build Tool)** running on top of **Snowflake** (a super-powerful cloud database) to transform the data between these layers.
+Before we look at the pipeline, you need to understand the two main tools we used to build it. They are the industry standard for modern data teams.
+
+### ❄️ Snowflake (The "Supercomputer Database")
+* **What it is:** Snowflake is a Cloud Data Warehouse. Think of it as a massive, incredibly fast database that lives in the cloud. 
+* **Why we used it:** Unlike traditional databases (like MySQL on your laptop) which crash if you give them too much data, Snowflake separates "Storage" (holding the data) from "Compute" (running the calculations). You can store 100 terabytes of data for pennies, and only pay for a "Warehouse" (the compute engine) for the exact seconds you are running a query. We used Python to load our 9 Kaggle CSVs directly into Snowflake.
+
+### 🏗️ dbt (Data Build Tool)
+* **What it is:** In the old days, data engineers wrote thousands of lines of messy SQL scripts or used clunky drag-and-drop tools to clean data. **dbt** is a framework that lets you write simple SQL `SELECT` statements, and it handles creating all the tables and views in Snowflake for you.
+* **Why we used it:** It brings "software engineering best practices" to SQL. It automatically figures out which tables need to be built first (dependencies), it lets us write automated tests for our data, and it generates a beautiful documentation website for our entire project.
+
+---
+
+## 3. The Architecture (The "Medallion" Pattern)
+
+We organize our data into three layers, like medals in the Olympics: **Bronze, Silver, and Gold.** We use **dbt** running on top of **Snowflake** to transform the data between these layers.
 
 ### 🥉 Step 1: The Bronze Layer (The "Raw" Layer)
 * **What happens:** We run a Python script that takes the 9 raw CSV files from Kaggle and dumps them directly into a Snowflake schema called `RAW`. 
@@ -32,14 +46,16 @@ In data engineering, we organize our data into three layers, like medals in the 
 
 ---
 
-## 3. The Quality Assurance (The "Inspector")
+## 4. The Quality Assurance (The "Inspector")
 
 If bad data makes it to the CEO's dashboard, you get fired. So we added an inspector.
 
 * **What happens:** We added **85 automated dbt tests**. Every time the pipeline runs, dbt checks: *"Are there any duplicate orders? Are there any missing primary keys? Does this customer ID actually exist in the customer table?"*
 * **Why we do it:** Data engineers don't just move data; they guarantee its accuracy. If any of these 85 tests fail, the pipeline stops and alerts us before the bad data reaches the dashboard.
 
-## 4. The CI/CD Pipeline (The "Bouncer")
+---
+
+## 5. The CI/CD Pipeline (The "Bouncer")
 
 In a real company, 10 data engineers might be writing code at the same time. What if someone writes bad SQL?
 
