@@ -1,4 +1,4 @@
-﻿# Olist E-Commerce dbt Pipeline
+﻿# Olist E-Commerce dbt Pipeline for Reporting
 
 > **End-to-end data engineering pipeline:** Python ingestion → Snowflake → dbt Core → GitHub Actions CI/CD
 
