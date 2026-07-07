@@ -20,29 +20,7 @@ into a production-ready analytics warehouse using modern data engineering tools.
 
 ## Architecture
 
-```
-[Kaggle CSVs: 9 tables, 100K+ orders]
-            |
-            | load_to_snowflake.py (bulk COPY INTO)
-            v
-[Snowflake RAW Schema]
-            |
-            | dbt staging models (9 views)
-            v
-[Snowflake STAGING Schema]
-            |
-            | dbt intermediate models (3 views)
-            v
-[Snowflake INTERMEDIATE Schema]
-            |
-            | dbt mart models (5 tables)
-            v
-[Snowflake MARTS Schema: 2 Facts + 3 Dimensions]
-            |
-            | BI Tools / SQL Analytics
-            v
-[Business Intelligence]
-```
+![Olist Data Engineering Architecture Diagram](docs/architecture_diagram.jpg)
 
 **Full architecture details:** [docs/architecture.md](docs/architecture.md)
 **Deep Dive Technical Explanation (For Students/Interviewers):** [docs/project_explanation.md](docs/project_explanation.md)
