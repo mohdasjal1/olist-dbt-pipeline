@@ -45,7 +45,7 @@ into a production-ready analytics warehouse using modern data engineering tools.
 ```
 
 **Full architecture details:** [docs/architecture.md](docs/architecture.md)
-
+**Deep Dive Technical Explanation (For Students/Interviewers):** [docs/project_explanation.md](docs/project_explanation.md)
 ---
 
 ## Dataset
