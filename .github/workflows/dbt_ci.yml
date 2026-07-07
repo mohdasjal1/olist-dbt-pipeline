@@ -97,22 +97,22 @@ jobs:
       - name: Generate profiles.yml from secrets
         run: |
           cat > dbt_project/profiles.yml << EOF
-          olist_snowflake:
-            target: ci
-            outputs:
-              ci:
-                type: snowflake
-                account: "${SNOWFLAKE_ACCOUNT}"
-                user: "${SNOWFLAKE_USER}"
-                password: "${SNOWFLAKE_PASSWORD}"
-                role: "ACCOUNTADMIN"
-                database: "OLIST_DB"
-                warehouse: "OLIST_WH"
-                schema: RAW
-                threads: 4
-                client_session_keep_alive: False
-                query_tag: dbt_ci_pipeline
-          EOF
+olist_snowflake:
+  target: ci
+  outputs:
+    ci:
+      type: snowflake
+      account: "${SNOWFLAKE_ACCOUNT}"
+      user: "${SNOWFLAKE_USER}"
+      password: "${SNOWFLAKE_PASSWORD}"
+      role: "ACCOUNTADMIN"
+      database: "OLIST_DB"
+      warehouse: "OLIST_WH"
+      schema: RAW
+      threads: 4
+      client_session_keep_alive: False
+      query_tag: dbt_ci_pipeline
+EOF
         env:
           SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
           SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
