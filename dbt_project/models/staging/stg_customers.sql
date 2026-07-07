@@ -8,7 +8,7 @@
 -- Author: Mohammad Asjad
 -- Last Updated: 2026-07-07
 
---testing ci/cd
+-- testing ci/cd
 
 {{ config(
     materialized='view',

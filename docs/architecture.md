@@ -1,4 +1,4 @@
-﻿# Architecture Documentation
+# Architecture Documentation
 # Project: Olist E-Commerce dbt Pipeline
 # Author: Mohammad Asjad
 # Last Updated: 2026-07-07

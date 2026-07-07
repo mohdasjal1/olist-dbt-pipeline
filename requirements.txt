@@ -1,4 +1,4 @@
-﻿# Snowflake connector for Python ingestion
+# Snowflake connector for Python ingestion
 snowflake-connector-python==3.12.3
 pandas==2.2.3
 pyarrow==17.0.0
