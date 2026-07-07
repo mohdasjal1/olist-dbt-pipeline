@@ -50,8 +50,7 @@ jobs:
       SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DATABASE }}
       SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
       SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
-      DBT_PROFILES_DIR: ./dbt_project
-
+      DBT_PROFILES_DIR: ${{ github.workspace }}/dbt_project
     steps:
       # -------------------------------------------------------
       # Step 1: Checkout repository
