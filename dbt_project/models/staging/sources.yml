@@ -1,0 +1,42 @@
+# sources.yml
+# Defines the RAW schema source tables for dbt lineage tracking.
+# WHY sources.yml?
+# - dbt tracks lineage: RAW tables -> staging -> intermediate -> marts
+# - source() macro generates correct database.schema.table references
+# - Enables source freshness checks in production
+
+version: 2
+
+sources:
+  - name: olist_raw
+    description: "Raw Olist Brazilian E-Commerce data loaded by Python ingestion script."
+    database: OLIST_DB
+    schema: RAW
+
+    tables:
+      - name: olist_orders_dataset
+        description: "Main orders table. One row per order."
+
+      - name: olist_order_items_dataset
+        description: "Order line items. One row per item within an order."
+
+      - name: olist_customers_dataset
+        description: "Customer data. customer_id is order-scoped; customer_unique_id is person-level."
+
+      - name: olist_products_dataset
+        description: "Product catalogue with physical dimensions and category name (Portuguese)."
+
+      - name: olist_sellers_dataset
+        description: "Seller/merchant data with location information."
+
+      - name: olist_order_payments_dataset
+        description: "Payment data. One order can have multiple payment rows."
+
+      - name: olist_order_reviews_dataset
+        description: "Customer reviews. Score 1-5, optional text comments."
+
+      - name: olist_geolocation_dataset
+        description: "Zip code prefix to lat/lng mapping. Multiple rows per zip."
+
+      - name: product_category_name_translation
+        description: "Portuguese to English product category name translation table."

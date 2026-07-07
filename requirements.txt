@@ -1,0 +1,16 @@
+﻿# Snowflake connector for Python ingestion
+snowflake-connector-python==3.12.3
+pandas==2.2.3
+pyarrow==17.0.0
+
+# dbt with Snowflake adapter
+dbt-core==1.9.0
+dbt-snowflake==1.9.0
+
+# SQL linting
+sqlfluff==3.3.1
+sqlfluff-templater-dbt==3.3.1
+
+# Utilities
+python-dotenv==1.0.1
+loguru==0.7.2

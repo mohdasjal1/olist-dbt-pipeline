@@ -1,0 +1,181 @@
+﻿# .github/workflows/dbt_ci.yml
+# Project: Olist E-Commerce dbt Pipeline
+# Purpose: CI/CD pipeline that validates all SQL and dbt models on every PR to main.
+#
+# WHY GitHub Actions for CI/CD? (Interview answer ready)
+# - Runs automatically on every PR — no manual triggering
+# - Blocks bad code from merging to main (protected branch)
+# - Free for public repos (unlimited minutes)
+# - Industry standard: same pattern used at Netflix, Airbnb, and most data teams
+# - sqlfluff catches SQL style issues before they reach Snowflake
+#
+# PIPELINE STEPS:
+# 1. Checkout code
+# 2. Setup Python 3.11
+# 3. Install all dependencies (dbt-snowflake, sqlfluff)
+# 4. sqlfluff lint — SQL code quality gate
+# 5. dbt deps — install dbt packages (dbt_utils etc.)
+# 6. dbt build — compile + run all models in one command
+# 7. dbt test — run all data quality tests
+# 8. dbt docs generate — build documentation site
+# If ANY step fails -> PR is blocked, cannot merge to main.
+
+name: dbt CI Pipeline
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'dbt_project/**'
+      - 'ingestion/**'
+      - 'requirements.txt'
+      - '.sqlfluff'
+
+  # Allow manual triggers for debugging
+  workflow_dispatch:
+
+jobs:
+  dbt-ci:
+    name: dbt Build and Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    env:
+      # Snowflake connection — injected from GitHub Secrets
+      # Set these in: GitHub Repo -> Settings -> Secrets -> Actions
+      SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+      SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+      SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+      SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DATABASE }}
+      SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+      SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
+      DBT_PROFILES_DIR: ./dbt_project
+
+    steps:
+      # -------------------------------------------------------
+      # Step 1: Checkout repository
+      # -------------------------------------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # -------------------------------------------------------
+      # Step 2: Setup Python
+      # -------------------------------------------------------
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'   # Cache pip dependencies for faster subsequent runs
+
+      # -------------------------------------------------------
+      # Step 3: Install dependencies
+      # -------------------------------------------------------
+      - name: Install Python dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # -------------------------------------------------------
+      # Step 4: SQL Linting with sqlfluff
+      # WHY first? Fail fast on style issues before wasting
+      # Snowflake compute credits on broken SQL.
+      # -------------------------------------------------------
+      - name: Run sqlfluff lint
+        working-directory: ./dbt_project
+        run: |
+          sqlfluff lint models/ \
+            --dialect snowflake \
+            --templater dbt \
+            --processes 4
+        continue-on-error: false   # Hard fail if lint errors found
+
+      # -------------------------------------------------------
+      # Step 5: Write profiles.yml from GitHub Secrets
+      # WHY not commit profiles.yml? It contains credentials.
+      # This step generates it dynamically from GitHub Secrets.
+      # -------------------------------------------------------
+      - name: Generate profiles.yml from secrets
+        run: |
+          cat > dbt_project/profiles.yml << EOF
+          olist_snowflake:
+            target: ci
+            outputs:
+              ci:
+                type: snowflake
+                account: "${SNOWFLAKE_ACCOUNT}"
+                user: "${SNOWFLAKE_USER}"
+                password: "${SNOWFLAKE_PASSWORD}"
+                role: "${SNOWFLAKE_ROLE}"
+                database: "${SNOWFLAKE_DATABASE}"
+                warehouse: "${SNOWFLAKE_WAREHOUSE}"
+                schema: RAW
+                threads: 4
+                client_session_keep_alive: False
+                query_tag: dbt_ci_pipeline
+          EOF
+        env:
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+          SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
+          SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DATABASE }}
+          SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+
+      # -------------------------------------------------------
+      # Step 6: dbt deps — install packages (dbt_utils)
+      # -------------------------------------------------------
+      - name: Run dbt deps
+        working-directory: ./dbt_project
+        run: dbt deps
+
+      # -------------------------------------------------------
+      # Step 7: dbt build — compile + run all models
+      # dbt build = dbt run + dbt test in dependency order
+      # -------------------------------------------------------
+      - name: Run dbt build
+        working-directory: ./dbt_project
+        run: |
+          dbt build \
+            --profiles-dir . \
+            --target ci \
+            --full-refresh \
+            --fail-fast
+
+      # -------------------------------------------------------
+      # Step 8: dbt test — explicit test run for clear reporting
+      # (dbt build already runs tests, but separate step shows
+      # test results clearly in GitHub Actions UI)
+      # -------------------------------------------------------
+      - name: Run dbt test
+        working-directory: ./dbt_project
+        run: |
+          dbt test \
+            --profiles-dir . \
+            --target ci
+
+      # -------------------------------------------------------
+      # Step 9: dbt docs generate
+      # Generates documentation manifest — could be deployed
+      # to GitHub Pages in a future enhancement
+      # -------------------------------------------------------
+      - name: Generate dbt docs
+        working-directory: ./dbt_project
+        run: |
+          dbt docs generate \
+            --profiles-dir . \
+            --target ci
+
+      # -------------------------------------------------------
+      # Step 10: Upload dbt artifacts for debugging
+      # Stores run logs and test results as downloadable artifacts
+      # -------------------------------------------------------
+      - name: Upload dbt artifacts
+        if: always()   # Upload even if previous steps fail (for debugging)
+        uses: actions/upload-artifact@v4
+        with:
+          name: dbt-artifacts
+          path: |
+            dbt_project/target/
+            dbt_project/logs/
+          retention-days: 7

@@ -1,0 +1,59 @@
+# dbt_project.yml
+# Project: Olist E-Commerce dbt Pipeline
+# Author: Mohammad Asjad
+# Description: 3-layer dbt transformation pipeline for Olist Brazilian E-Commerce data
+
+name: 'olist_dbt_pipeline'
+version: '1.0.0'
+config-version: 2
+
+# Profile name -- must match profile in profiles.yml
+profile: 'olist_snowflake'
+
+# File path configurations
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+# Package dependencies
+packages-install-path: "dbt_packages"
+
+# Model configurations by layer
+# WHY: Each layer has different materialization strategy:
+# - Staging: views (cheap, always fresh, no storage cost)
+# - Intermediate: views (just business logic, no need for persistence)
+# - Marts: tables (end users query these -- needs fast performance)
+models:
+  olist_dbt_pipeline:
+    staging:
+      +materialized: view
+      +schema: staging
+      +tags: ['staging']
+
+    intermediate:
+      +materialized: view
+      +schema: intermediate
+      +tags: ['intermediate']
+
+    marts:
+      +materialized: table
+      +schema: marts
+      +tags: ['marts']
+      fct_orders:
+        +materialized: table
+      fct_order_items:
+        +materialized: table
+      dim_customers:
+        +materialized: table
+      dim_products:
+        +materialized: table
+      dim_sellers:
+        +materialized: table

@@ -1,0 +1,71 @@
+2026-07-07 12:13:43 | INFO     | ============================================================
+2026-07-07 12:13:43 | INFO     | OLIST E-COMMERCE DATA INGESTION PIPELINE
+2026-07-07 12:13:43 | INFO     | Target: Snowflake RAW schema
+2026-07-07 12:13:43 | INFO     | ============================================================
+2026-07-07 12:13:43 | INFO     | All required environment variables are set.
+2026-07-07 12:13:43 | INFO     | Found 9/9 CSV files ready to load.
+2026-07-07 12:13:43 | INFO     | Connecting to Snowflake account: QVUNGIW-GN25217
+2026-07-07 12:13:46 | SUCCESS  | Connected to Snowflake: OLIST_DB.RAW
+2026-07-07 12:14:31 | INFO     | ============================================================
+2026-07-07 12:14:31 | INFO     | OLIST E-COMMERCE DATA INGESTION PIPELINE
+2026-07-07 12:14:31 | INFO     | Target: Snowflake RAW schema
+2026-07-07 12:14:31 | INFO     | ============================================================
+2026-07-07 12:14:31 | INFO     | All required environment variables are set.
+2026-07-07 12:14:31 | INFO     | Found 9/9 CSV files ready to load.
+2026-07-07 12:14:31 | INFO     | Connecting to Snowflake account: QVUNGIW-GN25217
+2026-07-07 12:14:33 | SUCCESS  | Connected to Snowflake: OLIST_DB.RAW
+2026-07-07 12:14:34 | INFO     | Snowflake context set: database, warehouse, schema active.
+2026-07-07 12:14:34 | INFO     | Loading: olist_orders_dataset.csv -> RAW.OLIST_ORDERS_DATASET
+2026-07-07 12:14:34 | DEBUG    | Reading: olist_orders_dataset.csv
+2026-07-07 12:14:35 | DEBUG    |   Rows: 99,441 | Columns: ['ORDER_ID', 'CUSTOMER_ID', 'ORDER_STATUS', 'ORDER_PURCHASE_TIMESTAMP', 'ORDER_APPROVED_AT', 'ORDER_DELIVERED_CARRIER_DATE', 'ORDER_DELIVERED_CUSTOMER_DATE', 'ORDER_ESTIMATED_DELIVERY_DATE']
+2026-07-07 12:15:08 | SUCCESS  |   ✓ OLIST_ORDERS_DATASET: 99,441 rows in 33.5s
+2026-07-07 12:15:08 | INFO     | Loading: olist_order_items_dataset.csv -> RAW.OLIST_ORDER_ITEMS_DATASET
+2026-07-07 12:15:08 | DEBUG    | Reading: olist_order_items_dataset.csv
+2026-07-07 12:15:09 | DEBUG    |   Rows: 112,650 | Columns: ['ORDER_ID', 'ORDER_ITEM_ID', 'PRODUCT_ID', 'SELLER_ID', 'SHIPPING_LIMIT_DATE', 'PRICE', 'FREIGHT_VALUE']
+2026-07-07 12:15:21 | SUCCESS  |   ✓ OLIST_ORDER_ITEMS_DATASET: 112,650 rows in 12.07s
+2026-07-07 12:15:21 | INFO     | Loading: olist_customers_dataset.csv -> RAW.OLIST_CUSTOMERS_DATASET
+2026-07-07 12:15:21 | DEBUG    | Reading: olist_customers_dataset.csv
+2026-07-07 12:15:21 | DEBUG    |   Rows: 99,441 | Columns: ['CUSTOMER_ID', 'CUSTOMER_UNIQUE_ID', 'CUSTOMER_ZIP_CODE_PREFIX', 'CUSTOMER_CITY', 'CUSTOMER_STATE']
+2026-07-07 12:15:35 | SUCCESS  |   ✓ OLIST_CUSTOMERS_DATASET: 99,441 rows in 14.17s
+2026-07-07 12:15:35 | INFO     | Loading: olist_products_dataset.csv -> RAW.OLIST_PRODUCTS_DATASET
+2026-07-07 12:15:35 | DEBUG    | Reading: olist_products_dataset.csv
+2026-07-07 12:15:36 | DEBUG    |   Rows: 32,951 | Columns: ['PRODUCT_ID', 'PRODUCT_CATEGORY_NAME', 'PRODUCT_NAME_LENGHT', 'PRODUCT_DESCRIPTION_LENGHT', 'PRODUCT_PHOTOS_QTY', 'PRODUCT_WEIGHT_G', 'PRODUCT_LENGTH_CM', 'PRODUCT_HEIGHT_CM', 'PRODUCT_WIDTH_CM']
+2026-07-07 12:15:41 | SUCCESS  |   ✓ OLIST_PRODUCTS_DATASET: 32,951 rows in 5.94s
+2026-07-07 12:15:41 | INFO     | Loading: olist_sellers_dataset.csv -> RAW.OLIST_SELLERS_DATASET
+2026-07-07 12:15:41 | DEBUG    | Reading: olist_sellers_dataset.csv
+2026-07-07 12:15:42 | DEBUG    |   Rows: 3,095 | Columns: ['SELLER_ID', 'SELLER_ZIP_CODE_PREFIX', 'SELLER_CITY', 'SELLER_STATE']
+2026-07-07 12:15:44 | SUCCESS  |   ✓ OLIST_SELLERS_DATASET: 3,095 rows in 2.63s
+2026-07-07 12:15:44 | INFO     | Loading: olist_order_payments_dataset.csv -> RAW.OLIST_ORDER_PAYMENTS_DATASET
+2026-07-07 12:15:44 | DEBUG    | Reading: olist_order_payments_dataset.csv
+2026-07-07 12:15:44 | DEBUG    |   Rows: 103,886 | Columns: ['ORDER_ID', 'PAYMENT_SEQUENTIAL', 'PAYMENT_TYPE', 'PAYMENT_INSTALLMENTS', 'PAYMENT_VALUE']
+2026-07-07 12:15:54 | SUCCESS  |   ✓ OLIST_ORDER_PAYMENTS_DATASET: 103,886 rows in 9.78s
+2026-07-07 12:15:54 | INFO     | Loading: olist_order_reviews_dataset.csv -> RAW.OLIST_ORDER_REVIEWS_DATASET
+2026-07-07 12:15:54 | DEBUG    | Reading: olist_order_reviews_dataset.csv
+2026-07-07 12:15:55 | DEBUG    |   Rows: 99,224 | Columns: ['REVIEW_ID', 'ORDER_ID', 'REVIEW_SCORE', 'REVIEW_COMMENT_TITLE', 'REVIEW_COMMENT_MESSAGE', 'REVIEW_CREATION_DATE', 'REVIEW_ANSWER_TIMESTAMP']
+2026-07-07 12:16:12 | SUCCESS  |   ✓ OLIST_ORDER_REVIEWS_DATASET: 99,224 rows in 16.83s
+2026-07-07 12:16:12 | INFO     | Loading: olist_geolocation_dataset.csv -> RAW.OLIST_GEOLOCATION_DATASET
+2026-07-07 12:16:12 | DEBUG    | Reading: olist_geolocation_dataset.csv
+2026-07-07 12:16:13 | DEBUG    |   Rows: 1,000,163 | Columns: ['GEOLOCATION_ZIP_CODE_PREFIX', 'GEOLOCATION_LAT', 'GEOLOCATION_LNG', 'GEOLOCATION_CITY', 'GEOLOCATION_STATE']
+2026-07-07 12:16:46 | SUCCESS  |   ✓ OLIST_GEOLOCATION_DATASET: 1,000,163 rows in 32.69s
+2026-07-07 12:16:46 | INFO     | Loading: product_category_name_translation.csv -> RAW.PRODUCT_CATEGORY_NAME_TRANSLATION
+2026-07-07 12:16:46 | DEBUG    | Reading: product_category_name_translation.csv
+2026-07-07 12:16:46 | DEBUG    |   Rows: 71 | Columns: ['PRODUCT_CATEGORY_NAME', 'PRODUCT_CATEGORY_NAME_ENGLISH']
+2026-07-07 12:16:48 | SUCCESS  |   ✓ PRODUCT_CATEGORY_NAME_TRANSLATION: 71 rows in 2.17s
+2026-07-07 12:16:49 | INFO     | ============================================================
+2026-07-07 12:16:49 | INFO     | INGESTION SUMMARY
+2026-07-07 12:16:49 | INFO     | ============================================================
+2026-07-07 12:16:49 | INFO     |   ✓ OLIST_ORDERS_DATASET                            99,441 rows  33.5s
+2026-07-07 12:16:49 | INFO     |   ✓ OLIST_ORDER_ITEMS_DATASET                      112,650 rows  12.07s
+2026-07-07 12:16:49 | INFO     |   ✓ OLIST_CUSTOMERS_DATASET                         99,441 rows  14.17s
+2026-07-07 12:16:49 | INFO     |   ✓ OLIST_PRODUCTS_DATASET                          32,951 rows  5.94s
+2026-07-07 12:16:49 | INFO     |   ✓ OLIST_SELLERS_DATASET                            3,095 rows  2.63s
+2026-07-07 12:16:49 | INFO     |   ✓ OLIST_ORDER_PAYMENTS_DATASET                   103,886 rows  9.78s
+2026-07-07 12:16:49 | INFO     |   ✓ OLIST_ORDER_REVIEWS_DATASET                     99,224 rows  16.83s
+2026-07-07 12:16:49 | INFO     |   ✓ OLIST_GEOLOCATION_DATASET                     1,000,163 rows  32.69s
+2026-07-07 12:16:49 | INFO     |   ✓ PRODUCT_CATEGORY_NAME_TRANSLATION                   71 rows  2.17s
+2026-07-07 12:16:49 | INFO     | ------------------------------------------------------------
+2026-07-07 12:16:49 | INFO     |   Tables loaded: 9/9
+2026-07-07 12:16:49 | INFO     |   Total rows:    1,550,922
+2026-07-07 12:16:49 | INFO     |   Failures:      0
+2026-07-07 12:16:49 | SUCCESS  | All tables loaded successfully into Snowflake RAW schema!
+2026-07-07 12:16:49 | SUCCESS  | Next step: Run dbt build to transform data through Staging -> Intermediate -> Marts

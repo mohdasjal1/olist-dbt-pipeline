@@ -1,0 +1,177 @@
+# schema.yml — Staging Layer
+# dbt tests for data quality on all 9 staging models.
+# WHY these tests?
+# - not_null on PKs: ensures no orphaned records
+# - unique on PKs: ensures no duplicate rows
+# - relationships: referential integrity (like FK constraints)
+# - accepted_values: enum validation without a lookup table
+
+version: 2
+
+models:
+
+  - name: stg_orders
+    description: "Cleaned orders with cast timestamps and standardized status."
+    columns:
+      - name: order_id
+        description: "Unique order identifier (UUID)"
+        tests:
+          - not_null
+          - unique
+
+      - name: customer_id
+        description: "Customer who placed the order"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_customers')
+              field: customer_id
+
+      - name: order_status
+        description: "Current order lifecycle status"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['delivered', 'shipped', 'canceled', 'unavailable', 'invoiced', 'processing', 'approved', 'created']
+
+      - name: order_purchase_at
+        tests:
+          - not_null
+
+  - name: stg_order_items
+    description: "Cleaned order line items with monetary values cast to FLOAT."
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_orders')
+              field: order_id
+
+      - name: order_item_id
+        tests:
+          - not_null
+
+      - name: product_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_products')
+              field: product_id
+
+      - name: seller_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_sellers')
+              field: seller_id
+
+      - name: item_price
+        tests:
+          - not_null
+
+      - name: freight_value
+        tests:
+          - not_null
+
+  - name: stg_customers
+    description: "Cleaned customer data with standardized state codes."
+    columns:
+      - name: customer_id
+        tests:
+          - not_null
+          - unique
+
+      - name: customer_unique_id
+        tests:
+          - not_null
+
+      - name: customer_state
+        tests:
+          - not_null
+
+  - name: stg_products
+    description: "Cleaned product data with cast dimensions and null-safe category."
+    columns:
+      - name: product_id
+        tests:
+          - not_null
+          - unique
+
+      - name: product_category_name
+        tests:
+          - not_null
+
+  - name: stg_sellers
+    description: "Cleaned seller/merchant data."
+    columns:
+      - name: seller_id
+        tests:
+          - not_null
+          - unique
+
+      - name: seller_state
+        tests:
+          - not_null
+
+  - name: stg_payments
+    description: "Cleaned payment data. One order can have multiple payment rows."
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+
+      - name: payment_type
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['credit_card', 'boleto', 'voucher', 'debit_card', 'not_defined']
+
+      - name: payment_value
+        tests:
+          - not_null
+
+  - name: stg_reviews
+    description: "Cleaned customer reviews with 1-5 score."
+    columns:
+      - name: review_id
+        tests:
+          - not_null
+
+      - name: order_id
+        tests:
+          - not_null
+
+      - name: review_score
+        tests:
+          - not_null
+          - accepted_values:
+              values: [1, 2, 3, 4, 5]
+
+  - name: stg_geolocation
+    description: "Deduplicated geolocation: one row per zip code prefix."
+    columns:
+      - name: zip_code_prefix
+        tests:
+          - not_null
+          - unique
+
+      - name: latitude
+        tests:
+          - not_null
+
+      - name: longitude
+        tests:
+          - not_null
+
+  - name: stg_product_category
+    description: "Portuguese to English category name translation table."
+    columns:
+      - name: product_category_name_pt
+        tests:
+          - not_null
+          - unique
+
+      - name: product_category_name_en
+        tests:
+          - not_null
